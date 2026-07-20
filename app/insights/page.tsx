@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { Cpu, Loader2, Sparkles } from "lucide-react";
 import {
@@ -11,29 +11,38 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { toast } from "react-toastify";
+
+interface AIAnalysisResult {
+  rawMaterialsCost: number;
+  logisticsCost: number;
+  savingsOpportunity: number;
+  riskAnalysisSummary: string;
+}
 
 export default function AIInsightsPage() {
   const [inputData, setInputData] = useState(
     "Raw Materials: 50000, Logistics: 25000, Discrepancies: 8000",
   );
-  const [analysis, setAnalysis] = useState<any>(null);
+  const [analysis, setAnalysis] = useState<AIAnalysisResult | null>(null);
   const [loading, setLoading] = useState(false);
 
   const handleAnalyze = async () => {
     setLoading(true);
     try {
-      const res = await axios.post("http://localhost:5000/api/ai/analyze", {
-        supplyData: inputData,
-      });
+      const res = await axios.post<AIAnalysisResult>(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/ai/analyze`,
+        { supplyData: inputData },
+      );
       setAnalysis(res.data);
     } catch (err) {
-      alert("AI Analysis failed. Check backend console.");
+      console.error("AI Analysis Error:", err);
+      toast.error("AI Analysis failed. Check backend console.");
     } finally {
       setLoading(false);
     }
   };
 
-  // চার্টের জন্য ডেটা ফরম্যাট করা
   const chartData = analysis
     ? [
         { name: "Raw Materials", Amount: analysis.rawMaterialsCost },
@@ -62,7 +71,7 @@ export default function AIInsightsPage() {
           <button
             onClick={handleAnalyze}
             disabled={loading}
-            className="mt-4 bg-primary text-white font-medium px-6 py-2.5 rounded-lg hover:bg-opacity-90 transition flex items-center gap-2 disabled:opacity-50"
+            className="mt-4 bg-black text-white font-medium px-6 py-2.5 rounded-lg hover:bg-opacity-90 transition flex items-center gap-2 disabled:opacity-50"
           >
             {loading ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -73,7 +82,6 @@ export default function AIInsightsPage() {
           </button>
         </div>
 
-        {/* AI আউটপুট এবং চার্ট সেকশন */}
         {analysis && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-fade-in">
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
