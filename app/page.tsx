@@ -19,17 +19,17 @@ export default function Home() {
           cost-saving insights using autonomous data intelligence agents.
         </p>
 
-        {/* Call to Actions */}
+        {/* 🎨 ফিক্সড কালার কল টু অ্যাকশন বাটনসমূহ */}
         <div className="mt-10 flex flex-wrap justify-center gap-4">
           <Link
             href="/explore"
-            className="bg-primary text-white font-medium px-8 py-3.5 rounded-xl hover:bg-opacity-90 transition flex items-center gap-2 text-sm shadow-sm"
+            className="bg-slate-950 text-white font-medium px-8 py-3.5 rounded-xl hover:bg-slate-800 transition flex items-center gap-2 text-sm shadow-sm"
           >
             Explore Requests <ArrowRight className="w-4 h-4" />
           </Link>
           <Link
             href="/insights"
-            className="bg-white border border-gray-200 text-gray-900 font-medium px-8 py-3.5 rounded-xl hover:bg-gray-50 transition text-sm"
+            className="bg-white border border-gray-200 text-slate-900 font-medium px-8 py-3.5 rounded-xl hover:bg-gray-50 transition text-sm shadow-sm"
           >
             Try AI Insights
           </Link>
