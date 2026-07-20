@@ -1,6 +1,7 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Link from "next/link";
+import { authClient } from "@/lib/auth-client";
 import {
   LogOut,
   UserCheck,
@@ -11,20 +12,11 @@ import {
 } from "lucide-react";
 
 export default function Navbar() {
-  const [user, setUser] = useState<{ name: string; email: string } | null>(
-    null,
-  );
+  // Better Auth Session Hook
+  const { data: session } = authClient.useSession();
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    setUser(null);
+  const handleLogout = async () => {
+    await authClient.signOut();
     alert("Logged out successfully!");
     window.location.href = "/login";
   };
@@ -69,10 +61,11 @@ export default function Navbar() {
       </div>
 
       <div>
-        {user ? (
+        {session?.user ? (
           <div className="flex items-center gap-3">
             <span className="text-xs font-semibold bg-gray-100 text-gray-700 px-3 py-1.5 rounded-full flex items-center gap-1.5 border border-gray-200">
-              <UserCheck className="w-3.5 h-3.5 text-emerald-600" /> {user.name}
+              <UserCheck className="w-3.5 h-3.5 text-emerald-600" />{" "}
+              {session.user.name}
             </span>
             <button
               onClick={handleLogout}

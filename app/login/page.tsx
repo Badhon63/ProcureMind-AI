@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
-import axios from "axios";
+import { authClient } from "@/lib/auth-client";
 import { LogIn, Loader2 } from "lucide-react";
 
 export default function LoginPage() {
@@ -16,24 +16,21 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const res = await axios.post(
-        "http://localhost:5000/api/auth/login",
-        formData,
-      );
-      if (res.data.success) {
-        // 💾 ১. ব্রাউজারে ইউজার ডাটা সেভ রাখা
-        localStorage.setItem("user", JSON.stringify(res.data.user));
+      // 🔑 Better-Auth SignIn Call
+      const { data, error } = await authClient.signIn.email({
+        email: formData.email.trim().toLowerCase(),
+        password: formData.password,
+      });
 
+      if (error) {
+        alert(error.message || "Invalid email or password!");
+      } else {
+        // Better-Auth সফল হলে অটোমেটিক সেশন কুকি ও সেশন ডাটা সেটআপ করে দেয়
         alert("Login Successful!");
-
-        // 🔄 ২. ড্যাশবোর্ডে রিডাইরেক্ট ও স্টেট রিফ্রেশ
         window.location.href = "/items/manage";
       }
     } catch (err: any) {
-      alert(
-        err.response?.data?.error ||
-          "Login failed! Please check your credentials.",
-      );
+      alert("An unexpected error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -80,7 +77,6 @@ export default function LoginPage() {
             />
           </div>
 
-          {/* 🎯 স্পষ্ট লগইন বাটন */}
           <button
             type="submit"
             disabled={loading}

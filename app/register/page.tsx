@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
-import axios from "axios";
+import { authClient } from "@/lib/auth-client";
 import { UserPlus, Loader2 } from "lucide-react";
 
 export default function RegisterPage() {
@@ -17,18 +17,21 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/register", {
-        name: formData.name.trim(),
+      // 🔒 Better-Auth API দিয়ে একাউন্ট তৈরি
+      const { data, error } = await authClient.signUp.email({
         email: formData.email.trim().toLowerCase(),
         password: formData.password,
+        name: formData.name.trim(),
       });
 
-      if (res.data.success) {
-        alert("Registration Successful! Now please login.");
+      if (error) {
+        alert(error.message || "Registration failed!");
+      } else {
+        alert("Registration Successful! Redirecting to login...");
         window.location.href = "/login";
       }
     } catch (err: any) {
-      alert(err.response?.data?.error || "Registration failed!");
+      alert("Something went wrong during registration.");
     } finally {
       setLoading(false);
     }
@@ -91,7 +94,6 @@ export default function RegisterPage() {
             />
           </div>
 
-          {/* 🎯 স্পষ্ট রেজিস্ট্রেশন বাটন */}
           <button
             type="submit"
             disabled={loading}
