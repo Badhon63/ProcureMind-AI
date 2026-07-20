@@ -3,8 +3,11 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import { LogIn, Loader2 } from "lucide-react";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     email: "manager@company.com",
     password: "",
@@ -16,21 +19,20 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      // 🔑 Better-Auth SignIn Call
-      const { data, error } = await authClient.signIn.email({
+      const { error } = await authClient.signIn.email({
         email: formData.email.trim().toLowerCase(),
         password: formData.password,
       });
 
       if (error) {
-        alert(error.message || "Invalid email or password!");
+        toast.error(error.message || "Invalid email or password!");
       } else {
-        // Better-Auth সফল হলে অটোমেটিক সেশন কুকি ও সেশন ডাটা সেটআপ করে দেয়
-        alert("Login Successful!");
-        window.location.href = "/items/manage";
+        router.push("/items/manage");
+        toast.success("Login Successful!");
       }
-    } catch (err: any) {
-      alert("An unexpected error occurred. Please try again.");
+    } catch (error) {
+      toast.error("An unexpected error occurred. Please try again.");
+      console.error("Login error:", error);
     } finally {
       setLoading(false);
     }
@@ -92,7 +94,7 @@ export default function LoginPage() {
         </form>
 
         <p className="text-xs text-center text-secondary mt-6">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <Link
             href="/register"
             className="text-accent font-semibold hover:underline"

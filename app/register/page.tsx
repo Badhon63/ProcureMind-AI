@@ -3,8 +3,11 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import { UserPlus, Loader2 } from "lucide-react";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -17,28 +20,28 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      // 🔒 Better-Auth API দিয়ে একাউন্ট তৈরি
-      const { data, error } = await authClient.signUp.email({
+      const { error } = await authClient.signUp.email({
         email: formData.email.trim().toLowerCase(),
         password: formData.password,
         name: formData.name.trim(),
       });
 
       if (error) {
-        alert(error.message || "Registration failed!");
+        toast.error(error.message || "Registration failed!");
       } else {
-        alert("Registration Successful! Redirecting to login...");
-        window.location.href = "/login";
+        toast.success("Registration Successful!");
+        router.push("/");
       }
-    } catch (err: any) {
-      alert("Something went wrong during registration.");
+    } catch (error) {
+      toast.error("Something went wrong during registration.");
+      console.error("Registration error:", error);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 pt-16">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="max-w-md w-full bg-white p-8 rounded-xl shadow-sm border border-gray-100 mx-4">
         <h2 className="text-2xl font-bold text-gray-950 text-center mb-2">
           Create Account
@@ -64,6 +67,7 @@ export default function RegisterPage() {
             />
           </div>
           <div>
+            name@company.com
             <label className="block text-xs font-semibold uppercase text-gray-600 mb-1">
               Company Email
             </label>

@@ -1,5 +1,4 @@
 "use client";
-import React from "react";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import {
@@ -10,15 +9,17 @@ import {
   LayoutDashboard,
   BrainCircuit,
 } from "lucide-react";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
-  // Better Auth Session Hook
   const { data: session } = authClient.useSession();
+  const router = useRouter();
 
   const handleLogout = async () => {
     await authClient.signOut();
-    alert("Logged out successfully!");
-    window.location.href = "/login";
+    router.push("/login");
+    toast.success("Logged out successfully!");
   };
 
   return (
