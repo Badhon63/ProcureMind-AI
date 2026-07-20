@@ -67,7 +67,6 @@ export default function RegisterPage() {
             />
           </div>
           <div>
-            name@company.com
             <label className="block text-xs font-semibold uppercase text-gray-600 mb-1">
               Company Email
             </label>

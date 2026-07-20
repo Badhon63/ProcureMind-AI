@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import {
@@ -11,26 +11,29 @@ import {
   Compass,
   Loader2,
 } from "lucide-react";
+import { IItem } from "@/types/item";
+
+const API_URL = process.env.NEXT_PUBLIC_SERVER_URL;
+
+type Item = IItem & { _id: string };
 
 export default function ExploreRFPsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
 
-  // ব্যাকএন্ড থেকে সব রিকোয়েস্ট বা RFP ডেটা নিয়ে আসা
   const {
     data: items,
     isLoading,
     error,
-  } = useQuery({
+  } = useQuery<Item[]>({
     queryKey: ["items"],
     queryFn: async () => {
-      const res = await axios.get("http://localhost:5000/api/items");
+      const res = await axios.get(`${API_URL}/api/items`);
       return res.data;
     },
   });
 
-  // সার্চ এবং ক্যাটাগরি অনুযায়ী ডেটা ফিল্টার করা
-  const filteredItems = items?.filter((item: any) => {
+  const filteredItems = items?.filter((item) => {
     const matchesSearch =
       item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.shortDesc.toLowerCase().includes(searchTerm.toLowerCase());
@@ -53,9 +56,7 @@ export default function ExploreRFPsPage() {
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <p className="text-red-500 font-medium">
-          Failed to load RFPs. Please ensure your backend server is running.
-        </p>
+        <p className="text-red-500 font-medium">Failed to load RFPs.</p>
       </div>
     );
   }
@@ -63,7 +64,6 @@ export default function ExploreRFPsPage() {
   return (
     <div className="bg-gray-50 min-h-screen pt-24 pb-12">
       <div className="max-w-7xl mx-auto px-6">
-        {/* হেডার সেকশন */}
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-gray-950 flex items-center gap-2">
             <Compass className="text-accent" /> Explore Procurement Requests
@@ -73,7 +73,6 @@ export default function ExploreRFPsPage() {
           </p>
         </div>
 
-        {/* সার্চ ও ফিল্টার বার */}
         <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex flex-col sm:flex-row gap-4 mb-8">
           <div className="relative flex-1">
             <Search className="w-4 h-4 text-gray-400 absolute left-3 top-3.5" />
@@ -99,7 +98,6 @@ export default function ExploreRFPsPage() {
           </div>
         </div>
 
-        {/* আরএফপি কার্ড লিস্ট */}
         {filteredItems?.length === 0 ? (
           <div className="text-center py-12 bg-white rounded-xl border border-dashed border-gray-200">
             <p className="text-sm text-secondary">
@@ -108,7 +106,7 @@ export default function ExploreRFPsPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredItems?.map((item: any) => (
+            {filteredItems?.map((item) => (
               <div
                 key={item._id}
                 className="bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition flex flex-col justify-between overflow-hidden"
@@ -120,7 +118,9 @@ export default function ExploreRFPsPage() {
                     </span>
                     <span className="text-[11px] text-gray-400 flex items-center gap-1">
                       <Calendar className="w-3 h-3" />{" "}
-                      {new Date(item.createdAt).toLocaleDateString()}
+                      {item.createdAt
+                        ? new Date(item.createdAt).toLocaleDateString()
+                        : "—"}
                     </span>
                   </div>
                   <h3 className="font-bold text-gray-900 text-base line-clamp-1 hover:text-primary transition cursor-pointer mb-2">
@@ -131,7 +131,6 @@ export default function ExploreRFPsPage() {
                   </p>
                 </div>
 
-                {/* কার্ড ফুটার তথ্য */}
                 <div className="border-t border-gray-50 bg-gray-50/50 px-5 py-3 flex items-center justify-between text-xs font-semibold text-gray-700">
                   <div className="flex items-center gap-1 text-primary">
                     <DollarSign className="w-4 h-4 text-emerald-600" />

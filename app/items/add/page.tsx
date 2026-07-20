@@ -3,30 +3,55 @@ import React, { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { PlusCircle, Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
+import { authClient } from "@/lib/auth-client";
+
+const initialFormState = {
+  title: "",
+  category: "Raw Materials",
+  budget: "",
+  location: "",
+  shortDesc: "",
+  fullDesc: "",
+};
 
 export default function AddItemPage() {
+  const router = useRouter();
   const queryClient = useQueryClient();
-  const [formData, setFormData] = useState({
-    title: "",
-    category: "Raw Materials",
-    budget: "",
-    location: "",
-    shortDesc: "",
-    fullDesc: "",
-  });
+  const { data: session, isPending: isSessionLoading } =
+    authClient.useSession();
+
+  const [formData, setFormData] = useState(initialFormState);
 
   const mutation = useMutation({
     mutationFn: async (newData: typeof formData) => {
-      const res = await axios.post("http://localhost:5000/api/items", newData);
+      if (!session?.user?.id) {
+        throw new Error("Not authenticated");
+      }
+      const payload = {
+        ...newData,
+        budget: Number(newData.budget),
+        userId: session.user.id,
+      };
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/items`,
+        payload,
+      );
       return res.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["items"] });
-      alert("Request Posted Successfully!");
-      window.location.href = "/items/manage";
+      toast.success("Request Posted Successfully!");
+      setFormData(initialFormState);
+      router.push("/items/manage");
     },
-    onError: () => {
-      alert("Failed to post request. Is Backend running?");
+    onError: (err) => {
+      if (err instanceof Error && err.message === "Not authenticated") {
+        toast.error("Please log in to post a request.");
+      } else {
+        toast.error("Failed to post request. Please try again.");
+      }
     },
   });
 
@@ -34,6 +59,31 @@ export default function AddItemPage() {
     e.preventDefault();
     mutation.mutate(formData);
   };
+
+  if (isSessionLoading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
+        <Loader2 className="w-8 h-8 text-primary animate-spin mb-2" />
+        <p className="text-sm text-secondary font-medium">Loading...</p>
+      </div>
+    );
+  }
+
+  if (!session) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 gap-3">
+        <p className="text-sm text-secondary">
+          You need to be logged in to post a sourcing request.
+        </p>
+        <button
+          onClick={() => router.push("/login")}
+          className="bg-black text-white text-sm font-medium px-5 py-2.5 rounded-lg hover:bg-black/80 transition"
+        >
+          Go to Login
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-gray-50 min-h-screen pt-24 pb-12 flex items-center justify-center">
@@ -53,6 +103,7 @@ export default function AddItemPage() {
             required
             placeholder="e.g., Bulk Organic Cotton Procurement"
             className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-primary"
+            value={formData.title}
             onChange={(e) =>
               setFormData({ ...formData, title: e.target.value })
             }
@@ -65,6 +116,7 @@ export default function AddItemPage() {
             </label>
             <select
               className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-primary"
+              value={formData.category}
               onChange={(e) =>
                 setFormData({ ...formData, category: e.target.value })
               }
@@ -83,6 +135,7 @@ export default function AddItemPage() {
               required
               placeholder="5000"
               className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-primary"
+              value={formData.budget}
               onChange={(e) =>
                 setFormData({ ...formData, budget: e.target.value })
               }
@@ -98,6 +151,7 @@ export default function AddItemPage() {
             required
             placeholder="e.g., Dhaka, Bangladesh"
             className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-primary"
+            value={formData.location}
             onChange={(e) =>
               setFormData({ ...formData, location: e.target.value })
             }
@@ -112,6 +166,7 @@ export default function AddItemPage() {
             required
             placeholder="Brief summary for list view..."
             className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-primary"
+            value={formData.shortDesc}
             onChange={(e) =>
               setFormData({ ...formData, shortDesc: e.target.value })
             }
@@ -126,6 +181,7 @@ export default function AddItemPage() {
             required
             placeholder="Provide detailed requirements..."
             className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-primary"
+            value={formData.fullDesc}
             onChange={(e) =>
               setFormData({ ...formData, fullDesc: e.target.value })
             }
@@ -134,9 +190,15 @@ export default function AddItemPage() {
         <button
           type="submit"
           disabled={mutation.isPending}
-          className="w-full bg-primary text-white font-medium py-3 rounded-lg text-sm hover:bg-opacity-90 transition flex items-center justify-center gap-2"
+          className="w-full bg-black text-white cursor-pointer font-medium py-3 rounded-lg text-sm hover:bg-black/80 flex items-center justify-center gap-2 duration-100"
         >
-          {mutation.isPending ? "Publishing..." : "Publish Sourcing Request"}
+          {mutation.isPending ? (
+            <>
+              <Loader2 className="animate-spin" size={16} /> Publishing...
+            </>
+          ) : (
+            "Publish Sourcing Request"
+          )}
         </button>
       </form>
     </div>
