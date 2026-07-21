@@ -1,6 +1,6 @@
 export default function AboutPage() {
   return (
-    <main className="bg-gray-50 min-h-screen pt-24 pb-16">
+    <main className="bg-gray-50 min-h-screen pt-10 sm:pt-24 pb-16">
       <div className="max-w-5xl mx-auto px-6">
         <h1 className="text-4xl font-bold text-gray-900 mb-4">
           About ProcureMind AI

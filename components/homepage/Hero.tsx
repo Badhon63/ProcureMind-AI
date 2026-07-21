@@ -7,7 +7,7 @@ const Hero = () => {
       <span className="bg-emerald-50 text-accent text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">
         Next-Gen Supply Chain Platform
       </span>
-      <h1 className="text-4xl md:text-6xl font-black text-gray-950 mt-6 tracking-tight leading-none">
+      <h1 className="text-5xl md:text-6xl font-black text-gray-950 mt-6 tracking-tight leading-none">
         Autonomous Procurement <br />
         <span className="text-primary">Powered by Agentic AI</span>
       </h1>

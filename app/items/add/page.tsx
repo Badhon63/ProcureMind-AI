@@ -15,6 +15,7 @@ const initialFormState = {
   location: "",
   shortDesc: "",
   fullDesc: "",
+  imageUrl: "",
 };
 
 export default function AddItemPage() {
@@ -157,6 +158,24 @@ export default function AddItemPage() {
               <option>Logistics</option>
               <option>Services</option>
             </select>
+          </div>
+          <div>
+            <label className="block text-xs font-semibold uppercase text-gray-600 mb-1">
+              Image URL
+            </label>
+
+            <input
+              type="url"
+              placeholder="https://example.com/image.jpg"
+              value={formData.imageUrl}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  imageUrl: e.target.value,
+                })
+              }
+              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-primary"
+            />
           </div>
           <div>
             <label className="block text-xs font-semibold uppercase text-gray-600 mb-1">

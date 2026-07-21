@@ -32,7 +32,7 @@ export default function FAQ() {
             <div key={faq.q} className="border-b border-stone-300 p-5">
               <div className="flex justify-between items-start">
                 <h3 className="font-semibold mb-2">{faq.q}</h3>
-                <span className="-mt-2 text-stone-500">
+                <span className="md:-mt-2 text-stone-500">
                   <Minus />
                 </span>
               </div>

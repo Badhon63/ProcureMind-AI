@@ -52,10 +52,11 @@ export default function AIInsightsPage() {
     : [];
 
   return (
-    <div className="bg-gray-50 min-h-screen pt-24 pb-12">
+    <div className="bg-gray-50 min-h-screen pt-10 sm:pt-24 pb-12">
       <div className="max-w-4xl mx-auto px-6">
         <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-          <Cpu className="text-accent" /> Agentic AI Budget Intelligence
+          <Cpu className="text-accent hidden sm:block" /> Agentic AI Budget
+          Intelligence
         </h2>
 
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-8">

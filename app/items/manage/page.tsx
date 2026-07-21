@@ -7,7 +7,6 @@ import {
   LayoutDashboard,
   AlertCircle,
   AlertTriangle,
-  Loader2,
   Eye,
 } from "lucide-react";
 import { toast } from "react-toastify";
@@ -59,9 +58,29 @@ export default function ManageItemsPage() {
 
   if (isSessionLoading || isLoading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
-        <Loader2 className="w-8 h-8 text-primary animate-spin mb-2" />
-        <p className="text-sm text-secondary font-medium">Loading...</p>
+      <div className="bg-gray-50 min-h-screen pt-10 md:pt-24 pb-12">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="h-8 w-72 bg-gray-200 rounded animate-pulse mb-6"></div>
+
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="p-4 border-b border-gray-200">
+              <div className="h-5 w-full bg-gray-200 rounded animate-pulse"></div>
+            </div>
+
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div
+                key={i}
+                className="flex items-center gap-6 p-4 border-b border-gray-100"
+              >
+                <div className="h-5 w-40 bg-gray-200 rounded animate-pulse"></div>
+                <div className="h-5 w-24 bg-gray-200 rounded animate-pulse"></div>
+                <div className="h-5 w-20 bg-gray-200 rounded animate-pulse"></div>
+                <div className="h-5 w-28 bg-gray-200 rounded animate-pulse"></div>
+                <div className="ml-auto h-8 w-20 bg-gray-200 rounded animate-pulse"></div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
@@ -92,56 +111,62 @@ export default function ManageItemsPage() {
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen pt-24 pb-12">
+    <div className="bg-gray-50 min-h-screen pt-10 md:pt-24 pb-12">
       <div className="max-w-6xl mx-auto px-6">
         <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-          <LayoutDashboard className="text-accent" /> Manage Sourcing Requests
+          <LayoutDashboard className="text-accent hidden sm:block" /> Manage
+          Sourcing Requests
         </h2>
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
           {items && items.length > 0 ? (
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-gray-50 border-b border-gray-100 text-xs font-semibold uppercase tracking-wider text-secondary">
-                  <th className="p-4">Project Title</th>
-                  <th className="p-4">Category</th>
-                  <th className="p-4">Budget</th>
-                  <th className="p-4">Location</th>
-                  <th className="p-4 text-center">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100 text-sm text-gray-700">
-                {items.map((item) => (
-                  <tr key={item._id} className="hover:bg-gray-50/50 transition">
-                    <td className="p-4 font-medium text-gray-900">
-                      {item.title}
-                    </td>
-                    <td className="p-4">
-                      <span className="bg-gray-100 text-xs px-2.5 py-1 rounded-md">
-                        {item.category}
-                      </span>
-                    </td>
-                    <td className="p-4 font-semibold">
-                      ${Number(item.budget).toLocaleString()}
-                    </td>
-                    <td className="p-4 text-secondary">{item.location}</td>
-                    <td className="p-4 flex items-center justify-center gap-3">
-                      <Link
-                        href={`/items/${item._id}`}
-                        className="p-2 text-blue-500 hover:blue-red-700 transition"
-                      >
-                        <Eye className="w-4 h-4" />
-                      </Link>
-                      <button
-                        onClick={() => setItemToDelete(item)}
-                        className="p-2 text-red-500 hover:text-red-700 transition"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </td>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-175 text-left border-collapse">
+                <thead>
+                  <tr className="bg-gray-50 border-b border-gray-100 text-xs font-semibold uppercase tracking-wider text-secondary">
+                    <th className="p-4">Project Title</th>
+                    <th className="p-4">Category</th>
+                    <th className="p-4">Budget</th>
+                    <th className="p-4">Location</th>
+                    <th className="p-4 text-center">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-gray-100 text-sm text-gray-700">
+                  {items.map((item) => (
+                    <tr
+                      key={item._id}
+                      className="hover:bg-gray-50/50 transition"
+                    >
+                      <td className="p-4 font-medium text-gray-900">
+                        {item.title}
+                      </td>
+                      <td className="p-4">
+                        <span className="bg-gray-100 text-xs px-2.5 py-1 rounded-md text-nowrap">
+                          {item.category}
+                        </span>
+                      </td>
+                      <td className="p-4 font-semibold">
+                        ${Number(item.budget).toLocaleString()}
+                      </td>
+                      <td className="p-4 text-secondary">{item.location}</td>
+                      <td className="p-4 flex items-center justify-center gap-3">
+                        <Link
+                          href={`/items/${item._id}`}
+                          className="p-2 text-blue-500 hover:text-blue-600 transition"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </Link>
+                        <button
+                          onClick={() => setItemToDelete(item)}
+                          className="p-2 text-red-500 hover:text-red-700 transition cursor-pointer"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           ) : (
             <div className="p-12 text-center">
               <p className="text-secondary text-sm mb-4">

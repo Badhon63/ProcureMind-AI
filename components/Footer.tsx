@@ -4,7 +4,7 @@ export default function Footer() {
   return (
     <footer className="bg-white border-t border-gray-100 py-10 mt-auto">
       <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div>
+        <div className="text-center mb-5 sm:text-left sm:mb-0">
           <p className="text-2xl font-bold text-gray-900">ProcureMind AI</p>
           <p className="text-xs text-gray-500 mt-0.5">
             AI powered procurement and sourcing platform for modern businesses.

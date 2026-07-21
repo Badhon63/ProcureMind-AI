@@ -2,7 +2,7 @@ import { Mail, Phone, MapPin } from "lucide-react";
 
 export default function ContactPage() {
   return (
-    <main className="bg-gray-50 min-h-screen pt-24 pb-16">
+    <main className="bg-gray-50 min-h-screen pt-10 sm:pt-24 pb-16">
       <div className="max-w-5xl mx-auto px-6">
         <h1 className="text-4xl font-bold text-gray-900 mb-4">Contact Us</h1>
 

@@ -8,7 +8,7 @@ import CTA from "@/components/homepage/CTA";
 
 export default function Home() {
   return (
-    <div className="bg-linear-to-b from-white to-gray-50 min-h-screen pt-32">
+    <div className="bg-linear-to-b from-white to-gray-50 min-h-screen pt-20 sm:pt-32">
       <Hero />
       <FeatureBadges />
       <Statistics />
