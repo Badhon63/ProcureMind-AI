@@ -8,11 +8,13 @@ import {
   AlertCircle,
   AlertTriangle,
   Loader2,
+  Eye,
 } from "lucide-react";
 import { toast } from "react-toastify";
 import { IItem } from "@/types/item";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const API_URL = process.env.NEXT_PUBLIC_SERVER_URL;
 
@@ -123,6 +125,12 @@ export default function ManageItemsPage() {
                     </td>
                     <td className="p-4 text-secondary">{item.location}</td>
                     <td className="p-4 flex items-center justify-center gap-3">
+                      <Link
+                        href={`/items/${item._id}`}
+                        className="p-2 text-blue-500 hover:blue-red-700 transition"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </Link>
                       <button
                         onClick={() => setItemToDelete(item)}
                         className="p-2 text-red-500 hover:text-red-700 transition"
@@ -135,8 +143,17 @@ export default function ManageItemsPage() {
               </tbody>
             </table>
           ) : (
-            <div className="p-12 text-center text-secondary text-sm">
-              No sourcing requests yet.
+            <div className="p-12 text-center">
+              <p className="text-secondary text-sm mb-4">
+                No sourcing requests yet.
+              </p>
+
+              <Link
+                href="/items/add"
+                className="inline-flex items-center justify-center rounded-lg bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 transition"
+              >
+                Create Your First Procurement Request
+              </Link>
             </div>
           )}
         </div>

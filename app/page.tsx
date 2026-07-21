@@ -4,7 +4,7 @@ import { ArrowRight, Cpu, ShieldCheck, Zap } from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="bg-gradient-to-b from-white to-gray-50 min-h-screen pt-32 flex flex-col justify-between">
+    <div className="bg-linear-to-b from-white to-gray-50 min-h-screen pt-32 flex flex-col justify-between">
       {/* Hero Section */}
       <div className="max-w-5xl mx-auto px-6 text-center">
         <span className="bg-emerald-50 text-accent text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">

@@ -12,6 +12,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { IItem } from "@/types/item";
+import Link from "next/link";
 
 const API_URL = process.env.NEXT_PUBLIC_SERVER_URL;
 
@@ -131,15 +132,27 @@ export default function ExploreRFPsPage() {
                   </p>
                 </div>
 
-                <div className="border-t border-gray-50 bg-gray-50/50 px-5 py-3 flex items-center justify-between text-xs font-semibold text-gray-700">
-                  <div className="flex items-center gap-1 text-primary">
-                    <DollarSign className="w-4 h-4 text-emerald-600" />
-                    <span>Est. {Number(item.budget).toLocaleString()} USD</span>
+                <div className="border-t border-gray-50 bg-gray-50/50 px-5 py-3">
+                  <div className="flex items-center justify-between text-xs font-semibold text-gray-700 mb-3">
+                    <div className="flex items-center gap-1 text-primary">
+                      <DollarSign className="w-4 h-4 text-emerald-600" />
+                      <span>
+                        Est. {Number(item.budget).toLocaleString()} USD
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-1 text-secondary">
+                      <MapPin className="w-3.5 h-3.5" />
+                      <span>{item.location}</span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-1 text-secondary">
-                    <MapPin className="w-3.5 h-3.5" />
-                    <span>{item.location}</span>
-                  </div>
+
+                  <Link
+                    href={`/items/${item._id}`}
+                    className="block w-full text-center bg-black text-white py-2 rounded-lg text-sm hover:opacity-90 transition"
+                  >
+                    View Details
+                  </Link>
                 </div>
               </div>
             ))}

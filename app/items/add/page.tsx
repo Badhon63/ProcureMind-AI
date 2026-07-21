@@ -6,6 +6,7 @@ import { PlusCircle, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { authClient } from "@/lib/auth-client";
+import { Wand2 } from "lucide-react";
 
 const initialFormState = {
   title: "",
@@ -23,6 +24,9 @@ export default function AddItemPage() {
     authClient.useSession();
 
   const [formData, setFormData] = useState(initialFormState);
+  const [genLength, setGenLength] = useState<"short" | "medium" | "long">(
+    "medium",
+  );
 
   const mutation = useMutation({
     mutationFn: async (newData: typeof formData) => {
@@ -51,6 +55,34 @@ export default function AddItemPage() {
         toast.error("Please log in to post a request.");
       } else {
         toast.error("Failed to post request. Please try again.");
+      }
+    },
+  });
+
+  const generateMutation = useMutation({
+    mutationFn: async () => {
+      if (!formData.title || !formData.shortDesc) {
+        throw new Error("Fill in Title and Short Description first");
+      }
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/ai/generate-description`,
+        {
+          title: formData.title,
+          shortDesc: formData.shortDesc,
+          length: genLength,
+        },
+      );
+      return res.data.fullDesc;
+    },
+    onSuccess: (fullDesc: string) => {
+      setFormData((prev) => ({ ...prev, fullDesc }));
+      toast.success("Description generated!");
+    },
+    onError: (err) => {
+      if (err instanceof Error) {
+        toast.error(err.message);
+      } else {
+        toast.error("Failed to generate description");
       }
     },
   });
@@ -172,14 +204,43 @@ export default function AddItemPage() {
             }
           />
         </div>
+
         <div>
-          <label className="block text-xs font-semibold uppercase text-gray-600 mb-1">
-            Full Specifications
-          </label>
+          <div className="flex items-center justify-between mb-1">
+            <label className="block text-xs font-semibold uppercase text-gray-600">
+              Full Specifications
+            </label>
+            <div className="flex items-center gap-2">
+              <select
+                value={genLength}
+                onChange={(e) =>
+                  setGenLength(e.target.value as "short" | "medium" | "long")
+                }
+                className="text-xs border border-gray-200 rounded-md px-2 py-1 bg-gray-50"
+              >
+                <option value="short">Short</option>
+                <option value="medium">Medium</option>
+                <option value="long">Long</option>
+              </select>
+              <button
+                type="button"
+                onClick={() => generateMutation.mutate()}
+                disabled={generateMutation.isPending}
+                className="flex items-center gap-1 text-xs font-medium text-primary hover:underline disabled:opacity-50 cursor-pointer"
+              >
+                {generateMutation.isPending ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <Wand2 className="w-3.5 h-3.5" />
+                )}
+                {formData.fullDesc ? "Regenerate with AI" : "Generate with AI"}
+              </button>
+            </div>
+          </div>
           <textarea
             rows={4}
             required
-            placeholder="Provide detailed requirements..."
+            placeholder="Provide detailed requirements, or click 'Generate with AI' above..."
             className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-primary"
             value={formData.fullDesc}
             onChange={(e) =>
